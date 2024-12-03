@@ -2,72 +2,39 @@ import pandas as pd
 df = pd.read_excel("Data_Day2.xlsx", sheet_name="Sheet1", header = None)
 
 
-def nuclearSafety(df):
-    unsafe = 0
-    for i in range(0, len(df)):
-        listRow = df.iloc[i].dropna().to_list()
-        inc = listRow.copy()
-        inc.sort()
-        dec = listRow.copy()
-        dec.sort(reverse=True)
-        if listRow == inc or listRow == dec:
-            for k in range(0, len(listRow) - 1):
-                if 0 == abs(listRow[k] - listRow[k + 1]) or abs(listRow[k] - listRow[k + 1]) > 3:
-                    # print("Consecutive values are equal too far apart")
-                    unsafe += 1
-                    break
-                else:
-                    continue
+def strictSafety(row):
+    delta = [b - a for a, b in zip(row[:-1], row[1:])]
+    if (min(delta) >= -3 and max(delta) <= -1) or (min(delta) >= 1 and max(delta) <= 3):
+        return "safe"
+    else:
+        return "unsafe"
+
+
+safetyResults = []
+for i in range(len(df)):
+    row = df.iloc[i].dropna().to_list()
+    safetyResults.append(strictSafety(row))
+print("Number of unsafe values: " + str(safetyResults.count("unsafe")))
+print("Number of safe values: " + str(safetyResults.count("safe")))
+
+
+def softSafety(row):
+    strict = strictSafety(row)
+    if strict == "safe":
+        return "safe"
+    else:
+        dropOneSafety = []
+        for k in range(len(row)):
+            dropOneSafety.append(strictSafety(row[:k] + row[k + 1:]))
+        if "safe" in dropOneSafety:
+            return "safe"
         else:
-            # print("List is not increasing or decreasing")
-            unsafe += 1
-
-    print("Number of unsave values in list: " + str(unsafe))
-    print("Number of safe values in list: " + str(len(df) - unsafe))
-    print("Total rows: " + str(len(df)))
+            return "unsafe"
 
 
-nuclearSafety(df)
-
-
-# for i in range(0, 10):
-#     unsafe = 0
-#     listRow = df.iloc[i].dropna().to_list()
-#     errorCount = 0
-#     errorIndex = []
-#     inc = listRow.copy()
-#     inc.sort()
-#     dec = listRow.copy()
-#     dec.sort(reverse=True)
-#     if listRow == inc:
-#         print("List is increasing.")
-#         for k in range(0, len(listRow) - 1):
-#             if 0 < listRow[k + 1] - listRow[k] <= 3:
-#                 continue
-#             else:
-#                 errorCount += 1
-#                 errorIndex.append(k)
-#     elif listRow == dec:
-#         print("List is decreasing.")
-#         for k in range(0, len(listRow) - 1):
-#             if 0 < listRow[k] - listRow[k + 1] <= 3:
-#                 continue
-#             else:
-#                 errorCount += 1
-#                 errorIndex.append(k)
-#     else:
-#         print("List is not increasing or decreasing")
-#     if errorCount >= 3:
-#         continue
-#     elif errorCount == 2:
-#         for j in range(0, len(errorIndex)):
-#             listRowCopy = listRow.copy()
-#             listRowCopy.pop(errorIndex[j])
-#
-#
-# print("Number of unsave values in list: " + str(unsafe))
-# print("Number of safe values in list: " + str(len(df) - unsafe))
-# print("Total rows: " + str(len(df)))
-
-
-
+softSafetyResults = []
+for i in range(len(df)):
+    row = df.iloc[i].dropna().to_list()
+    softSafetyResults.append(softSafety(row))
+print("Number of soft unsafe values: " + str(softSafetyResults.count("unsafe")))
+print("Number of soft safe values: " + str(softSafetyResults.count("safe")))
