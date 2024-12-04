@@ -17,12 +17,8 @@ def findDiagonals(matrix):
         diagonal = []
         for i in range(max(0, d - m + 1), min(n, d + 1)):
             j = d - i
-            print("d: " + str(d))
-            print("row: " + str(i))
-            print("column: " + str(j))
             # Get the value at indexes i and j
             diagonal.append(matrix[i][j])
-            print(diagonal)
         # Add diagonal to list of diagonals
         diagonals.append(''.join(diagonal))
 
@@ -31,12 +27,8 @@ def findDiagonals(matrix):
         diagonal = []
         for i in range(max(0, d - m + 1), min(n, d + 1)):
             j = m - 1 - (d - i)
-            print("d: " + str(d))
-            print("row: " + str(i))
-            print("column: " + str(j))
             # Get the value at the intersection of i and j
             diagonal.append(matrix[i][j])
-            print(diagonal)
         # Add diagonal to list of diagonals
         diagonals.append(''.join(diagonal))
     return diagonals
